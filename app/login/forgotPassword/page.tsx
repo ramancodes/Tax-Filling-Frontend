@@ -4,8 +4,8 @@ import axios from "axios";
 import React from "react";
 const {
   Sheet,
-  CssBaseline,
   Typography,
+  CssBaseline,
   FormControl,
   FormLabel,
   Input,
@@ -13,11 +13,10 @@ const {
   Link,
 } = require("@mui/joy");
 
-const Register = () => {
+const ForgotPassword = () => {
   const [formData, setFormData] = React.useState({
     username: "",
-    email: "",
-    password: "",
+    newPassword: "",
     role: "user",
   });
 
@@ -26,19 +25,20 @@ const Register = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleForgotPassword = async (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const data = await axios.post(`${AppConfig.BACKEND_URL}/register`, formData);
-    if(data.status === 201){
-      console.log("Registered Successful", data.data);  
+    const data = await axios.post(`${AppConfig.BACKEND_URL}/forgot-password`, formData);
+    if(data.status === 200){
+      console.log("Password Reset Successful", data.data);  
       }
     else{
-      console.log("Registration Failed");
+      console.log("Password Reset Successful Failed");
     }
   };
+
   return (
-    <main>
-      <CssBaseline />
+    <div>
+    <CssBaseline />
       <Sheet
         sx={{
           width: 300,
@@ -56,9 +56,8 @@ const Register = () => {
       >
         <div>
           <Typography level="h4" component="h1">
-            <b>Welcome!</b>
+            <b>Reset Your Password</b>
           </Typography>
-          <Typography level="body-sm">Create a new account.</Typography>
         </div>
         <FormControl>
           <FormLabel>Username</FormLabel>
@@ -72,39 +71,34 @@ const Register = () => {
           />
         </FormControl>
         <FormControl>
-          <FormLabel>Email</FormLabel>
+          <FormLabel>New Password</FormLabel>
           <Input
             // html input attribute
-            name="email"
-            type="email"
-            placeholder="Enter Email"
-            value={formData.email}
-            onChange={handleInputChange}
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Password</FormLabel>
-          <Input
-            // html input attribute
-            name="password"
+            name="newPassword"
             type="password"
-            placeholder="Enter Password"
-            value={formData.password}
+            placeholder="Enter New Password"
+            value={formData.newPassword}
             onChange={handleInputChange}
           />
         </FormControl>
-        <Button sx={{ mt: 1 }} onClick={handleSubmit}>
-          Sign up
+        <Button sx={{ mt: 1 }} onClick={handleForgotPassword}>
+          Reset Password
         </Button>
         <Typography
-          endDecorator={<Link href="/login">Log in</Link>}
+          endDecorator={<Link href="/login">Click Here</Link>}
           sx={{ fontSize: "sm", alignSelf: "center" }}
         >
-          Already have an account?
+          Back To Login ?
+        </Typography>
+        <Typography
+          endDecorator={<Link href="/login/getUsername">Click Here</Link>}
+          sx={{ fontSize: "sm", alignSelf: "center" }}
+        >
+          Forgot Username?
         </Typography>
       </Sheet>
-    </main>
+    </div>
   );
 };
 
-export default Register;
+export default ForgotPassword;
