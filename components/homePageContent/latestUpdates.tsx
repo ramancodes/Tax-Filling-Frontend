@@ -89,7 +89,7 @@ const LatestUpdates = () => {
                 Maximize Your Tax Refund
               </h3>
               <p className="text-gray-600 mb-4">
-                Top 5 strategies to ensure you don't miss any deductions and get
+                Top 5 strategies to ensure you don&apos;t miss any deductions and get
                 the maximum refund possible.
               </p>
               <Link

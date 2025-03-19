@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 const About = () => {
@@ -21,11 +22,13 @@ const About = () => {
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/3 mb-6 md:mb-0">
-              <img
-                src="/logo.svg"
-                alt="Project Logo"
-                className="rounded-lg shadow-md"
-              />
+            <Image
+              src="/logo.svg"
+              alt="Project Logo"
+              className="rounded-lg shadow-md"
+              width={400}
+              height={400}
+            />
             </div>
             <div className="md:w-2/3 md:pl-8">
               <p className="text-gray-700 mb-4">
@@ -52,7 +55,13 @@ const About = () => {
         </h2>
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="flex gap-2 justify-center items-center">
-            <img src="/india.svg" className="bg-[#1a2038] px-2 py-1 rounded" />
+          <Image
+            src="/india.svg"
+            alt="India"
+            className="bg-[#1a2038] px-2 py-1 rounded"
+            width={200}
+            height={200}
+          />
             <p className="text-gray-700 mb-4">
               The Indian tax system is administered by the Central Board of
               Direct Taxes (CBDT) and the Central Board of Indirect Taxes and

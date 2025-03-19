@@ -1,7 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import YouTubeIcon from "@mui/icons-material/YouTube";
-import Image from "next/image";
 
 const ThingsToKnow = () => {
   const content = {

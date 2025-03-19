@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 const page = () => {
@@ -11,7 +12,9 @@ const page = () => {
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/4 mb-6 md:mb-0">
-              <img
+              <Image
+              width={400}
+              height={400}
                 src="/dev.jpg"
                 alt="Developer Team"
                 className="rounded-full shadow-md"

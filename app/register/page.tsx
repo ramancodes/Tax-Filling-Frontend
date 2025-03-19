@@ -2,7 +2,7 @@
 import { AppConfig } from "@/config/config";
 import axios from "axios";
 import React from "react";
-const {
+import {
   Sheet,
   CssBaseline,
   Typography,
@@ -11,7 +11,7 @@ const {
   Input,
   Button,
   Link,
-} = require("@mui/joy");
+} from "@mui/joy";
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -93,7 +93,7 @@ const Register = () => {
             onChange={handleInputChange}
           />
         </FormControl>
-        <Button sx={{ mt: 1 }} onClick={handleSubmit}>
+        <Button sx={{ mt: 1, bgcolor: '#303c8c'  }} onClick={(event: any)=>handleSubmit(event)}>
           Sign up
         </Button>
         <Typography
