@@ -25,11 +25,13 @@ const Header = () => {
       </Head>
 
       {/* Header & Navbar */}
-      <header className="shadow-md">
-        <div className="container mx-auto  flex flex-col bg-[#303c8c]">
-          <div className="flex items-center justify-between bg-gray-100 px-10 py-2">
+      <header className="shadow-md bg-[#303c8c]">
+        <div className="container flex flex-col ">
+          <div className="flex items-center justify-between bg-gray-100 px-16 py-2 w-lvw">
             <Link href='/'>
-                <img
+                <Image
+                width={180}
+                height={180}
                 src="/logo.svg"
                 alt="SimpleTax Logo"
                 className="h-13 w-max"

@@ -44,7 +44,7 @@ const ContactUs = () => {
       <div className="py-8 text-center">
         <div className="max-w-6xl mx-auto px-4">
           <h1 className="text-3xl font-bold">Contact Us</h1>
-          <p className="mt-2">We're here to help with your tax filing questions and concerns.</p>
+          <p className="mt-2">We&apos;re here to help with your tax filing questions and concerns.</p>
         </div>
       </div>
       
@@ -83,7 +83,7 @@ const ContactUs = () => {
             {submitted ? (
               <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
                 <p className="font-medium">Thank you for contacting us!</p>
-                <p>We've received your message and will get back to you within 24-48 hours.</p>
+                <p>We&apos;ve received your message and will get back to you within 24-48 hours.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">

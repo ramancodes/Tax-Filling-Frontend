@@ -112,7 +112,11 @@ const Footer = () => {
           <div className="border-t border-gray-400 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className='flex justify-center items-center gap-6'>
               <Link href='https://www.incometax.gov.in/iec/foportal/' target='_blank'>
-                <img src="/india.svg" alt="india" />
+                <Image
+                width={130}
+                height={100}
+                 src="/india.svg" 
+                 alt="india" />
               </Link>
               <p className="text-gray-400 mb-4 md:mb-0">
                 © 2025 SimpleTax. All rights reserved.

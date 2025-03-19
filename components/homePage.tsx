@@ -1,6 +1,4 @@
-"use client";
-import React, { useState } from "react";
-import Link from "next/link";
+import React from "react";
 import HeroSection from "./homePageContent/heroSection";
 import QuickLinks from "./homePageContent/quickLinks";
 import LatestUpdates from "./homePageContent/latestUpdates";

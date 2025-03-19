@@ -2,7 +2,7 @@
 import { AppConfig } from "@/config/config";
 import axios from "axios";
 import React from "react";
-const {
+import {
   Sheet,
   Typography,
   CssBaseline,
@@ -11,7 +11,7 @@ const {
   Input,
   Button,
   Link,
-} = require("@mui/joy");
+} from "@mui/joy";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = React.useState({
@@ -69,7 +69,7 @@ const ForgotPassword = () => {
             onChange={handleInputChange}
           />
         </FormControl>
-        <Button sx={{ mt: 1 }} onClick={handleGetUserName}>
+        <Button sx={{ mt: 1, bgcolor: '#303c8c'  }} onClick={(event: any)=>handleGetUserName(event)}>
           Get Username
         </Button>
         <Typography

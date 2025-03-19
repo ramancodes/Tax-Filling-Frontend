@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 
 const Help = () => {
   const [activeTab, setActiveTab] = useState('faq');
-  const [expandedFaq, setExpandedFaq] = useState(null);
+  const [expandedFaq, setExpandedFaq] = useState<Number | null>(null);
 
-  const toggleFaq = (index: any) => {
+  const toggleFaq = (index: Number) => {
     if (expandedFaq === index) {
       setExpandedFaq(null);
     } else {
