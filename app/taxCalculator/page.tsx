@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const TaxCalcultor = () => {
+export default function TaxCalcultor() {
   return (
     <div>TaxCalcultor</div>
   )
