@@ -42,7 +42,6 @@ export const getUserDetails = (UserId: string, headers = {}) => {
 export const updateUserDetails = (Update: Boolean, payload: any, headers = {}) => {
   return async (dispatch: any) => {
     try {
-      console.log(payload);
       const url = Update
         ? `${AppConfig.BACKEND_URL}/update-profile`
         : `${AppConfig.BACKEND_URL}/create-profile`;

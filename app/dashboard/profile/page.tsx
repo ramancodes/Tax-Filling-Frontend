@@ -113,10 +113,10 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (fetch) {
-      setFetch(false);
       fetchUserDetails();
+      setFetch(false);
     }
-  }, []);
+  }, [fetch]);
 
   const handleSaveProfile = () => {
     try {
@@ -148,9 +148,12 @@ export default function ProfilePage() {
             headers: { Authorization: `Bearer ${bearerToken}` },
           }
           )
+      ).then(()=>{
+        setIsEditing(false);
+        setFetch(true);
+        toast.success("Profile Updated");
+      }
       )
-      setIsEditing(false);
-      setFetch(true);
     } catch (error) {
       toast.error("Failed to Update")
     }
@@ -208,7 +211,21 @@ export default function ProfilePage() {
                 <p className="text-gray-500">{details?.email || email}</p>
                 <button
                   className="mt-2 px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-[#303c8c] cursor-pointer"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setIsEditing(true)
+                    setFormData({
+                      firstName: details?.firstName || "",
+                      middleName: details?.middleName || "",
+                      lastName: details?.lastName || "",
+                      gender: details?.gender || "",
+                      dob: details?.dob || "",
+                      phoneNo: details?.phoneNo || "",
+                      address: details?.address || "",
+                      occupation: details?.occupation || "",
+                      website: details?.website || "",
+                      UserId: details?.UserId || id,
+                    });
+                  }}
                 >
                   Edit Profile
                 </button>

@@ -29,13 +29,6 @@ const Register = () => {
       isLoginError,
   } = useAppSelector((state: RootState) => state.application);
 
-  React.useEffect(() => {
-    if (status == 200) {
-      Cookies.set("bearerToken", bearerToken, { expires: 7 });
-      window.location.href = "/";
-    }
-  }, [status]);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -46,7 +39,12 @@ const Register = () => {
       event.preventDefault();
       dispatch(
         login(formData, false)
-      );
+      ).then(()=>{
+        if (status == 200) {
+          Cookies.set("bearerToken", bearerToken, { expires: 7 });
+          window.location.href = "/";
+        }
+      })
     } catch (error: any) {
       console.log(error);
     }

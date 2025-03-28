@@ -13,6 +13,7 @@ import {
 import { useAppDispatch, useAppSelector, RootState } from "../../store";
 import Cookies from "js-cookie";
 import {login} from '../../store/applications/actions';
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = React.useState({
@@ -28,13 +29,6 @@ const Login = () => {
       isLoginError,
   } = useAppSelector((state: RootState) => state.application);
 
-  React.useEffect(() => {
-    if (status == 200) {
-      Cookies.set("bearerToken", bearerToken, { expires: 7 });
-      window.location.href = "/";
-    }
-  }, [status]);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -45,7 +39,12 @@ const Login = () => {
       event.preventDefault();
       dispatch(
         login(formData, true)
-      );
+      ).then(()=>{
+        if (status == 200) {
+          Cookies.set("bearerToken", bearerToken, { expires: 7 });
+          window.location.href = "/";
+        }
+      })
     } catch (error: any) {
       console.log(error);
     }
