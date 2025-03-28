@@ -116,7 +116,7 @@ export default function ProfilePage() {
       setFetch(false);
       fetchUserDetails();
     }
-  }, [fetch]);
+  }, []);
 
   const handleSaveProfile = () => {
     try {
