@@ -14,12 +14,11 @@ export interface ApplicationState {
   isLoginError: boolean;
 }
 
-// Function to safely retrieve user data from localStorage
 const getUserData = () => {
   try {
     return JSON.parse(localStorage.getItem("LOGGED_IN_USER") || "{}");
   } catch {
-    return {}; // Return empty object if JSON parsing fails
+    return {};
   }
 };
 

@@ -1,9 +1,9 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { applicationState } from './slice'
+import { ApplicationState } from './slice'
 
 export const reducers = {
   setApplicationState(
-    state: applicationState,
+    state: ApplicationState,
     action: PayloadAction<any>
   ) {
     const { bearerToken, id, email } = action.payload;
@@ -13,13 +13,13 @@ export const reducers = {
   },
 
   setApiState(
-    state: applicationState,
+    state: ApplicationState,
     action: PayloadAction<{ isError: boolean; status: number; message: string }>
   ) {
     state.apiState = action.payload;
   },
 
-  setIsLoginError(state: applicationState, action: PayloadAction<{ isLoginError: boolean }>) {
+  setIsLoginError(state: ApplicationState, action: PayloadAction<{ isLoginError: boolean }>) {
     state.isLoginError = action.payload.isLoginError;
   }
 };
