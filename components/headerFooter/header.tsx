@@ -65,7 +65,7 @@ const Header = () => {
       {/* Header & Navbar */}
       <header className="shadow-md bg-[#303c8c]">
         <div className="container flex flex-col ">
-          <div className="flex items-center justify-between bg-gray-100 px-16 py-2 w-lvw">
+          <div className={`flex items-center justify-between bg-gray-100 px-16 py-2 max-w-[100vw] overflow-x-hidden`}>
             <Link href='/'>
                 <Image
                 width={180}
