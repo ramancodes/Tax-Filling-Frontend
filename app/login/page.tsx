@@ -10,8 +10,9 @@ import {
   Button,
   Link,
 } from "@mui/joy";
-import {AppConfig} from '../../config/config';
-import axios from "axios";
+import { useAppDispatch, useAppSelector, RootState } from "../../store";
+import Cookies from "js-cookie";
+import {login} from '../../store/applications/actions';
 
 const Login = () => {
   const [formData, setFormData] = React.useState({
@@ -19,6 +20,20 @@ const Login = () => {
     password: "",
     role: "user",
   });
+  const dispatch = useAppDispatch();
+
+  const {
+      bearerToken,
+      apiState: { status, isError, message },
+      isLoginError,
+  } = useAppSelector((state: RootState) => state.application);
+
+  React.useEffect(() => {
+    if (status == 200) {
+      Cookies.set("bearerToken", bearerToken, { expires: 7 });
+      window.location.href = "/";
+    }
+  }, [status]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -26,14 +41,13 @@ const Login = () => {
   };
 
   const handleSubmit = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    // const data = AppConfig.BACKEND_URL;
-    const data = await axios.post(`${AppConfig.BACKEND_URL}/login`, formData);
-    if(data.status === 200){
-      console.log("Login Successful", data.data);  
-      }
-    else{
-      console.log("Login Failed");
+    try {
+      event.preventDefault();
+      dispatch(
+        login(formData, true)
+      );
+    } catch (error: any) {
+      console.log(error);
     }
   };
 

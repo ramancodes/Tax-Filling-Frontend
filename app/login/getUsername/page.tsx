@@ -12,12 +12,15 @@ import {
   Button,
   Link,
 } from "@mui/joy";
+import toast from "react-hot-toast";
 
-const ForgotPassword = () => {
+const GetUsername = () => {
   const [formData, setFormData] = React.useState({
     email: "",
     role: "user",
   });
+
+  const [username, setUsername] = React.useState(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -25,13 +28,17 @@ const ForgotPassword = () => {
   };
 
   const handleGetUserName = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const data = await axios.get(`${AppConfig.BACKEND_URL}/get-username`, { params: formData });
-    if(data.status === 200){
-      console.log("Username fetched Successfully", data.data);  
+    try {
+      event.preventDefault();
+      const data = await axios.get(`${AppConfig.BACKEND_URL}/get-username`, { params: formData });
+      if(data.status === 200){
+        console.log("Username fetched Successfully", data.data);  
+        setUsername(data.data.user);
+        toast.success(data.data.message);
       }
-    else{
-      console.log("Username fetching Failed");
+    } catch (error: any) {
+      setUsername(null);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -69,6 +76,11 @@ const ForgotPassword = () => {
             onChange={handleInputChange}
           />
         </FormControl>
+        {
+          username 
+          ? <Typography sx={{fontSize:"large"}}>Retrieved Username: <span className="text-blue-950">{username}</span></Typography>
+          : null
+        }
         <Button sx={{ mt: 1, bgcolor: '#303c8c'  }} onClick={(event: any)=>handleGetUserName(event)}>
           Get Username
         </Button>
@@ -89,4 +101,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default GetUsername;

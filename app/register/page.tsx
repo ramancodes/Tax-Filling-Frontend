@@ -1,6 +1,4 @@
 "use client";
-import { AppConfig } from "@/config/config";
-import axios from "axios";
 import React from "react";
 import {
   Sheet,
@@ -12,6 +10,9 @@ import {
   Button,
   Link,
 } from "@mui/joy";
+import { useAppDispatch, useAppSelector, RootState } from "../../store";
+import Cookies from "js-cookie";
+import {login} from '../../store/applications/actions';
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -20,6 +21,20 @@ const Register = () => {
     password: "",
     role: "user",
   });
+  const dispatch = useAppDispatch();
+
+  const {
+      bearerToken,
+      apiState: { status, isError, message },
+      isLoginError,
+  } = useAppSelector((state: RootState) => state.application);
+
+  React.useEffect(() => {
+    if (status == 200) {
+      Cookies.set("bearerToken", bearerToken, { expires: 7 });
+      window.location.href = "/";
+    }
+  }, [status]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -27,15 +42,16 @@ const Register = () => {
   };
 
   const handleSubmit = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const data = await axios.post(`${AppConfig.BACKEND_URL}/register`, formData);
-    if(data.status === 201){
-      console.log("Registered Successful", data.data);  
-      }
-    else{
-      console.log("Registration Failed");
+    try {
+      event.preventDefault();
+      dispatch(
+        login(formData, false)
+      );
+    } catch (error: any) {
+      console.log(error);
     }
   };
+
   return (
     <main>
       <CssBaseline />
@@ -74,7 +90,6 @@ const Register = () => {
         <FormControl>
           <FormLabel>Email</FormLabel>
           <Input
-            // html input attribute
             name="email"
             type="email"
             placeholder="Enter Email"
@@ -85,7 +100,6 @@ const Register = () => {
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
-            // html input attribute
             name="password"
             type="password"
             placeholder="Enter Password"
