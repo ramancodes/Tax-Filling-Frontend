@@ -43,18 +43,56 @@ const Header = () => {
     }
   }, [isAuthenticated]);
 
-
   const toggleMobileNav = () => {
     setMobileNavOpen(!mobileNavOpen);
   };
 
-  const navItems = [
+  const navMenus = [
+    {
+      text: "Individual/HUF",
+      href: "/individual-huf",
+      submenus: [
+        { text: "Salaried Employees", href: "/individual-huf/salaried-employees" },
+        { text: "Business/Profession", href: "/individual-huf/business-profession" },
+        { text: "Senior / Super Senior Citizen", href: "/individual-huf/senior-citizens" },
+        { text: "Non Resident", href: "/individual-huf/non-resident" },
+        { text: "Hindu Undivided Family (HUF)", href: "/individual-huf/huf" }
+      ]
+    },
+    {
+      text: "Company",
+      href: "/company",
+      submenus: []
+    },
+    {
+      text: "Non-Company",
+      href: "/non-company",
+      submenus: []
+    },
+    {
+      text: "Tax Professionals & Others",
+      href: "/tax-professionals",
+      submenus: [
+        { text: "Guidance to file Tax Return", href: "/tax-professionals/guidance" },
+        { text: "Return / Forms applicable to me", href: "/tax-professionals/forms" },
+        { text: "Tax slabs", href: "/tax-professionals/tax-slabs" },
+        { text: "Deductions on which I can get tax b...", href: "/tax-professionals/deductions" },
+        { text: "Update my profile details", href: "/tax-professionals/profile" },
+        { text: "Assisted filing", href: "/tax-professionals/assisted-filing" },
+        { text: "Downloads", href: "/tax-professionals/downloads" }
+      ]
+    },
+    { text: "About", href: "/about", submenus: [] },
+    { text: "Help", href: "/help", submenus: [] },
+    { text: "Contact", href: "/contact", submenus: [] }
+  ];
+
+  const additionalNavItems = [
     { text: "Home", href: "/" },
     { text: "Dashboard", href: "/dashboard" },
-    { text: "About", href: "/about" },
-    { text: "Help", href: "/help" },
-    { text: "Contact", href: "/contact" },
+    
   ];
+
   return (
     <div>
       <Head>
@@ -64,8 +102,8 @@ const Header = () => {
 
       {/* Header & Navbar */}
       <header className="shadow-md bg-[#303c8c]">
-        <div className="container flex flex-col ">
-          <div className={`flex items-center justify-between bg-gray-100 px-16 py-2 max-w-[100vw] overflow-x-hidden`}>
+        <div className="flex flex-col justify-center items-center w-full">
+          <div className={`flex items-center justify-between bg-gray-100 px-8 py-2 w-full`}>
             <Link href='/'>
                 <Image
                 width={180}
@@ -105,29 +143,68 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="px-10 py-2">
-            <nav className="mr-4 flex items-center justify-start gap-20 pl-10">
-              {
-                isAuthenticated 
-                ? navItems.map((item) => (
+          <div className="px-1 py-2 w-full">
+            <nav className="flex items-center justify-center gap-10 pl-10">
+              {isAuthenticated ? (
+                additionalNavItems.map((item) => (
                   <Link
                     key={item.text}
                     href={item.href}
-                    className="px-3 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold"
-                  >
-                    {item.text}
-                  </Link>
-                )) 
-                : navItems.filter((item)=>item.text!=='Dashboard').map((item) => (
-                  <Link
-                    key={item.text}
-                    href={item.href}
-                    className="px-3 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold"
+                    className="px-1 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
                   >
                     {item.text}
                   </Link>
                 ))
-              }
+              ) : (
+                additionalNavItems
+                  .filter((item) => item.text !== 'Dashboard')
+                  .map((item) => (
+                    <Link
+                      key={item.text}
+                      href={item.href}
+                      className="px-1 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
+                    >
+                      {item.text}
+                    </Link>
+                  ))
+              )}
+
+              {/* Dropdown Menus */}
+              {navMenus.map((menu) => (
+                <div key={menu.text} className="group relative">
+                  <Link
+                    href={menu.href}
+                    className="px-1 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm flex items-center"
+                  >
+                    {menu.text}
+                    {menu.submenus.length > 0 && (
+                      <svg 
+                        className="w-4 h-4 ml-1" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </Link>
+                  
+                  {menu.submenus.length > 0 && (
+                    <div className="absolute hidden group-hover:block z-50 bg-white shadow-lg mt-2 rounded-md min-w-[250px]">
+                      {menu.submenus.map((submenu) => (
+                        <Link
+                          key={submenu.text}
+                          href={submenu.href}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm"
+                        >
+                          {submenu.text}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </nav>
           </div>
 
@@ -188,7 +265,7 @@ const Header = () => {
 
               <nav className="mt-8">
                 <ul>
-                  {navItems.map((item) => (
+                  {additionalNavItems.map((item) => (
                     <li key={item.text} className="mb-2">
                       <Link
                         href={item.href}
@@ -198,6 +275,30 @@ const Header = () => {
                       </Link>
                     </li>
                   ))}
+                  
+                  {navMenus.map((menu) => (
+                    <React.Fragment key={menu.text}>
+                      <li>
+                        <Link
+                          href={menu.href}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded font-semibold"
+                        >
+                          {menu.text}
+                        </Link>
+                      </li>
+                      {menu.submenus.map((submenu) => (
+                        <li key={submenu.text} className="pl-4">
+                          <Link
+                            href={submenu.href}
+                            className="block px-4 py-2 text-gray-600 hover:bg-gray-100 rounded text-sm"
+                          >
+                            {submenu.text}
+                          </Link>
+                        </li>
+                      ))}
+                    </React.Fragment>
+                  ))}
+                  
                   <li className="border-t border-gray-200 my-2 pt-2">
                     <Link
                       href="/login"
