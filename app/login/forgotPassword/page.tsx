@@ -12,6 +12,7 @@ import {
   Button,
   Link,
 } from "@mui/joy";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = React.useState({
@@ -26,13 +27,15 @@ const ForgotPassword = () => {
   };
 
   const handleForgotPassword = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const data = await axios.post(`${AppConfig.BACKEND_URL}/forgot-password`, formData);
-    if(data.status === 200){
-      console.log("Password Reset Successful", data.data);  
+    try {
+      event.preventDefault();
+      const data = await axios.post(`${AppConfig.BACKEND_URL}/forgot-password`, formData);
+      if(data.status === 200){
+        console.log("Password Reset Successful", data.data);  
+        toast.success(data.data.message);
       }
-    else{
-      console.log("Password Reset Successful Failed");
+    } catch (error: any) {
+      toast.error(error.response.data.message);
     }
   };
 

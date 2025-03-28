@@ -1,11 +1,48 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { useAppDispatch, useAppSelector, RootState } from "../../store";
+import {logout} from '../../store/applications/actions'
+import { useRouter, usePathname  } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const {
+      bearerToken,
+      apiState: { status, isError, message },
+      isLoginError,
+  } = useAppSelector((state: RootState) => state.application);
+
+  React.useEffect(() => {
+    if(isLoginError){
+      toast.error(message);
+    }
+  }, [isLoginError]);
+  
+  const handleLogout = () =>{
+    dispatch(logout());
+    router.push("/");
+  }
+
+  useEffect(() => {
+    setIsAuthenticated(!!bearerToken);
+  }, [bearerToken]);
+
+  useEffect(() => {
+    if (isAuthenticated && (pathname === "/login" || pathname === "/register" || pathname === "/login/forgotPassword" || pathname === "/login/getUsername")) {
+      router.push("/");
+    }
+  }, [isAuthenticated]);
+
 
   const toggleMobileNav = () => {
     setMobileNavOpen(!mobileNavOpen);
@@ -13,6 +50,7 @@ const Header = () => {
 
   const navItems = [
     { text: "Home", href: "/" },
+    { text: "Dashboard", href: "/dashboard" },
     { text: "About", href: "/about" },
     { text: "Help", href: "/help" },
     { text: "Contact", href: "/contact" },
@@ -37,34 +75,59 @@ const Header = () => {
                 className="h-13 w-max"
                 />
             </Link>
-            <div className="pr-4">
-              <Link
-                href="/login"
-                className="inline-flex items-center px-4 py-1 border border-[#303c8c] text-[#303c8c] hover:bg-[#303c8c] hover:text-white rounded mr-2"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="inline-flex items-center px-4 py-1 border border-[#303c8c] bg-[#303c8c] text-white hover:bg-[#303c8c]/90 rounded"
-              >
-                Sign Up
-              </Link>
-            </div>
+            {
+              !isAuthenticated ? (
+                <div className="pr-4">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center px-4 py-1 border border-[#303c8c] text-[#303c8c] hover:bg-[#303c8c] hover:text-white rounded mr-2"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="inline-flex items-center px-4 py-1 border border-[#303c8c] bg-[#303c8c] text-white hover:bg-[#303c8c]/90 rounded"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              ) : (
+                <div className="pr-4">
+                  <button
+                    onClick={handleLogout}
+                    className="cursor-pointer inline-flex items-center px-4 py-1 border border-[#303c8c] text-[#303c8c] hover:bg-[#303c8c] hover:text-white rounded mr-2"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )
+            } 
           </div>
 
           {/* Desktop Navigation */}
           <div className="px-10 py-2">
             <nav className="mr-4 flex items-center justify-start gap-20 pl-10">
-              {navItems.map((item) => (
-                <Link
-                  key={item.text}
-                  href={item.href}
-                  className="px-3 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold"
-                >
-                  {item.text}
-                </Link>
-              ))}
+              {
+                isAuthenticated 
+                ? navItems.map((item) => (
+                  <Link
+                    key={item.text}
+                    href={item.href}
+                    className="px-3 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold"
+                  >
+                    {item.text}
+                  </Link>
+                )) 
+                : navItems.filter((item)=>item.text!=='Dashboard').map((item) => (
+                  <Link
+                    key={item.text}
+                    href={item.href}
+                    className="px-3 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold"
+                  >
+                    {item.text}
+                  </Link>
+                ))
+              }
             </nav>
           </div>
 
