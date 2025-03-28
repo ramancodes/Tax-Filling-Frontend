@@ -1,107 +1,310 @@
-export default function IncomePage() {
-    return (
-      <div>
-        <h1 className="text-2xl font-bold mb-6">Source Of Income</h1>
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Primary Income</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Employment</h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Employer</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">Tech Solutions Inc.</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Position</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">Senior Developer</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Monthly Income</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">$7,500.00</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">January 2020</div>
-                  </div>
-                </div>
-                <button className="mt-4 text-blue-600 hover:text-blue-800">Edit</button>
+"use client";
+
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector, RootState } from "../../../store";
+
+// Define the income source interface
+interface IncomeSource {
+  id?: string;
+  incomeType: 'Primary' | 'Secondary' | 'Extra';
+  source: string;
+  amountPerAnnum: number;
+}
+
+export default function IncomeSourcesPage() {
+  const dispatch = useAppDispatch();
+  const {
+    application: {
+      bearerToken,
+      id,
+      apiState: { status, isError, message },
+    },
+  } = useAppSelector((state: RootState) => state);
+
+  const [incomeSources, setIncomeSources] = useState<IncomeSource[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentIncomeSource, setCurrentIncomeSource] = useState<IncomeSource>({
+    incomeType: 'Primary',
+    source: '',
+    amountPerAnnum: 0,
+  });
+
+  const [errors, setErrors] = useState({
+    source: '',
+    amountPerAnnum: '',
+  });
+
+  const validateSource = (source: string) => {
+    return source.trim().length > 0;
+  };
+
+  const validateAmount = (amount: number) => {
+    return amount > 0;
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    // Reset specific error when user starts typing
+    setErrors((prev) => ({
+      ...prev,
+      [name]: '',
+    }));
+
+    // Special handling for amount conversion
+    if (name === 'amountPerAnnum') {
+      setCurrentIncomeSource((prevState) => ({
+        ...prevState,
+        [name]: Number(value),
+      }));
+    } else {
+      setCurrentIncomeSource((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleSaveIncomeSource = () => {
+    try {
+      const newErrors = {
+        source: !validateSource(currentIncomeSource.source)
+          ? "Income source cannot be empty"
+          : "",
+        amountPerAnnum: !validateAmount(currentIncomeSource.amountPerAnnum)
+          ? "Amount must be greater than 0"
+          : "",
+      };
+
+      setErrors(newErrors);
+
+      const hasErrors = Object.values(newErrors).some((error) => error !== "");
+
+      if (hasErrors) {
+        return;
+      }
+
+      const existingSourceIndex = incomeSources.findIndex(
+        (source) => source.id === currentIncomeSource.id
+      );
+
+      if (existingSourceIndex !== -1) {
+        // Updating existing income source
+        const updatedSources = [...incomeSources];
+        updatedSources[existingSourceIndex] = currentIncomeSource;
+        setIncomeSources(updatedSources);
+        toast.success("Income source updated");
+      } else {
+        // Adding new income source
+        const newIncomeSource = {
+          ...currentIncomeSource,
+          id: `income_${Date.now()}`,
+        };
+        setIncomeSources((prev) => [...prev, newIncomeSource]);
+        toast.success("Income source added");
+      }
+
+      setIsEditing(false);
+      setCurrentIncomeSource({
+        incomeType: 'Primary',
+        source: '',
+        amountPerAnnum: 0,
+      });
+    } catch (error) {
+      toast.error("Failed to save income source");
+    }
+  };
+
+  const handleEditIncomeSource = (source: IncomeSource) => {
+    setCurrentIncomeSource(source);
+    setIsEditing(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsEditing(false);
+    setCurrentIncomeSource({
+      incomeType: 'Primary',
+      source: '',
+      amountPerAnnum: 0,
+    });
+    setErrors({
+      source: '',
+      amountPerAnnum: '',
+    });
+  };
+
+  const handleRemoveIncomeSource = (sourceId: string) => {
+    const confirmRemove = window.confirm(
+      "Are you sure you want to remove this income source?"
+    );
+    if (confirmRemove) {
+      setIncomeSources((prev) => prev.filter((source) => source.id !== sourceId));
+      toast.success("Income source removed");
+    }
+  };
+
+  return (
+    <div>
+      <p className="text-2xl font-bold mb-6">Income Sources</p>
+      {incomeSources.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-10 mt-20">
+          <div className="h-34 w-34 rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-500 text-5xl">💰</span>
+          </div>
+          <div className="flex flex-col gap-4">
+            <p className="text-xl font-semibold">Add Your Income Sources</p>
+            <button
+              className="mt-2 px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-[#303c8c] cursor-pointer"
+              onClick={() => setIsEditing(true)}
+            >
+              Add Income Source
+            </button>
+          </div>
+        </div>
+      )}
+
+      {incomeSources.length > 0 && (
+        <div className="space-y-4">
+          <button
+            className="mb-4 px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-[#303c8c] cursor-pointer"
+            onClick={() => setIsEditing(true)}
+          >
+            Add Income Source
+          </button>
+
+          {incomeSources.map((source) => (
+            <div
+              key={source.id}
+              className="bg-white shadow rounded-lg p-6 flex justify-between items-center"
+            >
+              <div>
+                <p className="text-lg font-semibold">{source.source}</p>
+                <p className="text-gray-600">
+                  Income Type: {source.incomeType}
+                </p>
+                <p className="text-gray-600">
+                  Amount per Annum: ₹{source.amountPerAnnum.toLocaleString()}
+                </p>
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleEditIncomeSource(source)}
+                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleRemoveIncomeSource(source.id!)}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Remove
+                </button>
               </div>
             </div>
-          </div>
-          
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Additional Income Sources</h2>
-              <button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center text-sm">
-                <span className="mr-1">+</span> Add Source
+          ))}
+        </div>
+      )}
+
+      {isEditing && (
+        <div className="fixed backdrop-blur-sm inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
+            <h2 className="text-xl font-bold mb-4">
+              {currentIncomeSource.id ? "Edit Income Source" : "Add Income Source"}
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Fill in your income source information
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="source"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Income Source
+                </label>
+                <input
+                  type="text"
+                  id="source"
+                  name="source"
+                  value={currentIncomeSource.source}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-md"
+                  placeholder="Enter Income Source (e.g., Job, Business)"
+                />
+                {errors.source && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.source}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="incomeType"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Income Type
+                </label>
+                <select
+                  id="incomeType"
+                  name="incomeType"
+                  value={currentIncomeSource.incomeType}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="Primary">Primary</option>
+                  <option value="Secondary">Secondary</option>
+                  <option value="Extra">Extra</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="amountPerAnnum"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Amount per Annum (₹)
+                </label>
+                <input
+                  type="number"
+                  id="amountPerAnnum"
+                  name="amountPerAnnum"
+                  value={currentIncomeSource.amountPerAnnum}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-md"
+                  placeholder="Enter Annual Income Amount"
+                />
+                {errors.amountPerAnnum && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.amountPerAnnum}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-4 mt-6">
+              <button
+                type="button"
+                onClick={handleCloseDialog}
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                Cancel
               </button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Freelance Work</h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Type</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">Web Development</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Average Monthly Income</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">$2,000.00</div>
-                  </div>
-                </div>
-                <div className="mt-4 flex space-x-3">
-                  <button className="text-blue-600 hover:text-blue-800">Edit</button>
-                  <button className="text-red-600 hover:text-red-800">Remove</button>
-                </div>
-              </div>
-              
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-2">Investments</h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Type</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">Dividend Stocks</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Average Monthly Income</label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded">$500.00</div>
-                  </div>
-                </div>
-                <div className="mt-4 flex space-x-3">
-                  <button className="text-blue-600 hover:text-blue-800">Edit</button>
-                  <button className="text-red-600 hover:text-red-800">Remove</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Income Summary</h2>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h3 className="text-sm font-medium text-gray-500">Total Monthly Income</h3>
-                  <p className="text-2xl font-bold text-green-600">$10,000.00</p>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h3 className="text-sm font-medium text-gray-500">Primary Income</h3>
-                  <p className="text-2xl font-bold">$7,500.00</p>
-                  <p className="text-sm text-gray-500">75% of total</p>
-                </div>
-                
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <h3 className="text-sm font-medium text-gray-500">Additional Income</h3>
-                  <p className="text-2xl font-bold">$2,500.00</p>
-                  <p className="text-sm text-gray-500">25% of total</p>
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={handleSaveIncomeSource}
+                className="px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-blue-700"
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
+}
