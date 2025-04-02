@@ -9,13 +9,14 @@ export const getBankDetails = (UserId: string, headers: any = {}) => {
     try {
       const {
         data: {
-          data: { rows, count },
+          bankDetails: { rows, count },
         },
         status,
       } = await axios.get(
-        `${AppConfig.BACKEND_URL}/get-banks/${UserId}`,
+        `${AppConfig.BACKEND_URL}/get-bankdetails/${UserId}`,
         headers
       );
+      
       const bankDetailsObj =
         rows && rows.length > 0
           ? rows.map((bankDetailsObj: any) => bankDetailsModel(bankDetailsObj))
@@ -45,14 +46,14 @@ export const getBankDetails = (UserId: string, headers: any = {}) => {
 };
 
 export const updateBankDetails = (
-  bankId: string,
   headers: any = {},
   payload: any = {}
 ) => {
   return async (dispatch: any) => {
     try {
+      delete payload.UserId;
       const { data, status } = await axios.put(
-        `${AppConfig.BACKEND_URL}/bank/${bankId}`,
+        `${AppConfig.BACKEND_URL}/update-bankdetails`,
         payload,
         headers
       );
@@ -77,7 +78,7 @@ export const deleteBankDetails = (bankId: string, headers: any = {}) => {
   return async (dispatch: any) => {
     try {
       const { data, status } = await axios.delete(
-        `${AppConfig.BACKEND_URL}/bank/${bankId}`,
+        `${AppConfig.BACKEND_URL}/delete-bankdetails/${bankId}`,
         headers
       );
 
@@ -97,11 +98,14 @@ export const deleteBankDetails = (bankId: string, headers: any = {}) => {
   };
 };
 
-export const addBankDetails = (headers: any = {}, payload: any = {}) => {
+export const addBankDetails = (UserId: string, headers: any = {}, payload: any = {}) => {
   return async (dispatch: any) => {
+    payload['UserId'] = UserId;
+    delete payload.bankId;
+    
     try {
       const { data, status } = await axios.post(
-        `${AppConfig.BACKEND_URL}/addBank`,
+        `${AppConfig.BACKEND_URL}/add-bankdetails`,
         payload,
         headers
       );

@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector, RootState } from "../../../store";
+import { getIncomeSource, updateIncomeSource, deleteIncomeSource, addIncomeSource } from "../../../store/incomeSources/actions"
 
 // Define the income source interface
 interface IncomeSource {
-  id?: string;
+  incomeSourceId?: string;
   incomeType: 'Primary' | 'Secondary' | 'Extra';
   source: string;
   amountPerAnnum: number;
@@ -20,15 +21,38 @@ export default function IncomeSourcesPage() {
       id,
       apiState: { status, isError, message },
     },
+    incomeSource: {
+      incomeSource: {rows, count}
+    }
   } = useAppSelector((state: RootState) => state);
 
-  const [incomeSources, setIncomeSources] = useState<IncomeSource[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [fetch, setFetch] = useState(true);
   const [currentIncomeSource, setCurrentIncomeSource] = useState<IncomeSource>({
+    incomeSourceId: "",
     incomeType: 'Primary',
     source: '',
     amountPerAnnum: 0,
   });
+
+  const fetchIncomeSource = async () => {
+    try {
+      dispatch(
+        getIncomeSource(id, {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  useEffect(() => {
+    if (fetch) {
+      fetchIncomeSource();
+      setFetch(false);
+    }
+  }, [fetch]);
 
   const [errors, setErrors] = useState({
     source: '',
@@ -48,13 +72,11 @@ export default function IncomeSourcesPage() {
   ) => {
     const { name, value } = e.target;
 
-    // Reset specific error when user starts typing
     setErrors((prev) => ({
       ...prev,
       [name]: '',
     }));
 
-    // Special handling for amount conversion
     if (name === 'amountPerAnnum') {
       setCurrentIncomeSource((prevState) => ({
         ...prevState,
@@ -68,7 +90,51 @@ export default function IncomeSourcesPage() {
     }
   };
 
-  const handleSaveIncomeSource = () => {
+  const handleAddIncomeSource = () => {
+    try {
+      const newErrors = {
+        source: !validateSource(currentIncomeSource.source)
+          ? "Income source cannot be empty"
+          : "",
+        amountPerAnnum: !validateAmount(currentIncomeSource.amountPerAnnum)
+          ? "Amount must be greater than 0"
+          : "",
+      };
+
+      setErrors(newErrors);
+
+      const hasErrors = Object.values(newErrors).some((error) => error !== "");
+
+      if (hasErrors) {
+        return;
+      }
+      
+      // TODO: implement add income
+      dispatch(
+        addIncomeSource(id,
+          {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          },
+          currentIncomeSource
+          )
+      ).then(()=>{
+        setIsEditing(false);
+        setFetch(true);
+        toast.success("New Income Source added");
+      })
+  
+      setIsEditing(false);
+      setCurrentIncomeSource({
+        incomeType: 'Primary',
+        source: '',
+        amountPerAnnum: 0,
+      });
+    } catch (error) {
+      
+    }
+  };
+
+  const handleUpdateIncomeSource = () => {
     try {
       const newErrors = {
         source: !validateSource(currentIncomeSource.source)
@@ -87,26 +153,20 @@ export default function IncomeSourcesPage() {
         return;
       }
 
-      const existingSourceIndex = incomeSources.findIndex(
-        (source) => source.id === currentIncomeSource.id
-      );
-
-      if (existingSourceIndex !== -1) {
-        // Updating existing income source
-        const updatedSources = [...incomeSources];
-        updatedSources[existingSourceIndex] = currentIncomeSource;
-        setIncomeSources(updatedSources);
-        toast.success("Income source updated");
-      } else {
-        // Adding new income source
-        const newIncomeSource = {
-          ...currentIncomeSource,
-          id: `income_${Date.now()}`,
-        };
-        setIncomeSources((prev) => [...prev, newIncomeSource]);
-        toast.success("Income source added");
-      }
-
+      // TODo: implement update income
+      dispatch(
+        updateIncomeSource(
+          {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          },
+          currentIncomeSource
+        )
+      ).then(()=>{
+        setIsEditing(false);
+        setFetch(true);
+        toast.success("Income Source updated");
+      })
+  
       setIsEditing(false);
       setCurrentIncomeSource({
         incomeType: 'Primary',
@@ -114,18 +174,24 @@ export default function IncomeSourcesPage() {
         amountPerAnnum: 0,
       });
     } catch (error) {
-      toast.error("Failed to save income source");
+      
     }
   };
 
-  const handleEditIncomeSource = (source: IncomeSource) => {
-    setCurrentIncomeSource(source);
+  const handleEditIncomeSource = (source: any) => {
+    setCurrentIncomeSource({
+      incomeSourceId: source.id,
+      incomeType: source.incomeType,
+      source: source.source,
+      amountPerAnnum: source.amountPerAnnum,
+    });
     setIsEditing(true);
   };
 
   const handleCloseDialog = () => {
     setIsEditing(false);
     setCurrentIncomeSource({
+      incomeSourceId: "",
       incomeType: 'Primary',
       source: '',
       amountPerAnnum: 0,
@@ -141,15 +207,26 @@ export default function IncomeSourcesPage() {
       "Are you sure you want to remove this income source?"
     );
     if (confirmRemove) {
-      setIncomeSources((prev) => prev.filter((source) => source.id !== sourceId));
-      toast.success("Income source removed");
+      dispatch(
+        deleteIncomeSource(
+          sourceId,
+          {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          },
+          )
+      ).then(()=>{
+        setIsEditing(false);
+        setFetch(true);
+        toast.success("Income Source removed");
+      }
+      )
     }
   };
 
   return (
     <div>
       <p className="text-2xl font-bold mb-6">Income Sources</p>
-      {incomeSources.length === 0 && (
+      {count === 0 && (
         <div className="flex flex-col items-center justify-center gap-10 mt-20">
           <div className="h-34 w-34 rounded-full bg-gray-200 flex items-center justify-center">
             <span className="text-gray-500 text-5xl">💰</span>
@@ -166,7 +243,7 @@ export default function IncomeSourcesPage() {
         </div>
       )}
 
-      {incomeSources.length > 0 && (
+      {count > 0 && (
         <div className="space-y-4">
           <button
             className="mb-4 px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-[#303c8c] cursor-pointer"
@@ -175,7 +252,7 @@ export default function IncomeSourcesPage() {
             Add Income Source
           </button>
 
-          {incomeSources.map((source) => (
+          {rows.map((source) => (
             <div
               key={source.id}
               className="bg-white shadow rounded-lg p-6 flex justify-between items-center"
@@ -197,7 +274,7 @@ export default function IncomeSourcesPage() {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleRemoveIncomeSource(source.id!)}
+                  onClick={() => handleRemoveIncomeSource(source?.id)}
                   className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Remove
@@ -212,7 +289,7 @@ export default function IncomeSourcesPage() {
         <div className="fixed backdrop-blur-sm inset-0 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
             <h2 className="text-xl font-bold mb-4">
-              {currentIncomeSource.id ? "Edit Income Source" : "Add Income Source"}
+              {currentIncomeSource?.incomeSourceId ? "Edit Income Source" : "Add Income Source"}
             </h2>
             <p className="text-gray-600 mb-6">
               Fill in your income source information
@@ -296,7 +373,7 @@ export default function IncomeSourcesPage() {
               </button>
               <button
                 type="button"
-                onClick={handleSaveIncomeSource}
+                onClick={currentIncomeSource?.incomeSourceId ? handleUpdateIncomeSource : handleAddIncomeSource}
                 className="px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-blue-700"
               >
                 Save
