@@ -10,7 +10,6 @@ import toast from "react-hot-toast";
 
 const Header = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -62,24 +61,28 @@ const Header = () => {
     {
       text: "Company",
       href: "/company",
-      submenus: []
+      submenus: [
+        {text: "Domestic Company", href: "/company/domestic-company"},
+        {text: "Foreign Company", href: "/company/foreign-company"}
+      ]
     },
     {
       text: "Non-Company",
       href: "/non-company",
-      submenus: []
+      submenus: [
+        {text:"Firm/LLP", href: "/non-company/firm-llp"},
+        {text:"Local Authority", href: "/non-company/local-authority"},
+        {text:"AOP/BOI/Trust/AJP", href: "/non-company/others"},
+      ]
     },
     {
       text: "Tax Professionals & Others",
       href: "/tax-professionals",
       submenus: [
-        { text: "Guidance to file Tax Return", href: "/tax-professionals/guidance" },
-        { text: "Return / Forms applicable to me", href: "/tax-professionals/forms" },
-        { text: "Tax slabs", href: "/tax-professionals/tax-slabs" },
-        { text: "Deductions on which I can get tax b...", href: "/tax-professionals/deductions" },
-        { text: "Update my profile details", href: "/tax-professionals/profile" },
-        { text: "Assisted filing", href: "/tax-professionals/assisted-filing" },
-        { text: "Downloads", href: "/tax-professionals/downloads" }
+        { text: "Chartered Accountant", href: "/tax-professionals/chartered-accountant" },
+        { text: "E-Return Intermediaries", href: "/tax-professionals/e-return-intermediaries" },
+        { text: "External Agency", href: "/tax-professionals/external-agency" },
+        { text: "Tax Deductor & Collector", href: "/tax-professionals/tax-deductor-collector" },
       ]
     },
     { text: "About", href: "/about", submenus: [] },
@@ -143,14 +146,14 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="px-1 py-2 w-full">
+          <div className="px-1 pt-3 w-full">
             <nav className="flex items-center justify-center gap-10 pl-10">
               {isAuthenticated ? (
                 additionalNavItems.map((item) => (
                   <Link
                     key={item.text}
                     href={item.href}
-                    className="px-1 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
+                    className="px-1 pb-3 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
                   >
                     {item.text}
                   </Link>
@@ -162,7 +165,7 @@ const Header = () => {
                     <Link
                       key={item.text}
                       href={item.href}
-                      className="px-1 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
+                      className="px-1 pb-3 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
                     >
                       {item.text}
                     </Link>
@@ -174,7 +177,7 @@ const Header = () => {
                 <div key={menu.text} className="group relative">
                   <Link
                     href={menu.href}
-                    className="px-1 py-1 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm flex items-center"
+                    className="px-1 pb-3 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm flex items-center"
                   >
                     {menu.text}
                     {menu.submenus.length > 0 && (
@@ -191,15 +194,26 @@ const Header = () => {
                   </Link>
                   
                   {menu.submenus.length > 0 && (
-                    <div className="absolute hidden group-hover:block z-50 bg-white shadow-lg mt-2 rounded-md min-w-[250px]">
+                    <div className="absolute hidden group-hover:block z-50 bg-white shadow-lg min-w-[270px]">
                       {menu.submenus.map((submenu) => (
-                        <Link
-                          key={submenu.text}
-                          href={submenu.href}
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm"
-                        >
-                          {submenu.text}
-                        </Link>
+                        <div className="border-b-2 border-gray-300">
+                          <Link
+                            key={submenu.text}
+                            href={submenu.href}
+                            className="flex justify-between px-6 py-4 text-gray-700 border-l-2 border-white hover:border-[#303c8c] hover:bg-blue-100 text-sm"
+                          >
+                            {submenu.text}
+                            <svg 
+                              className="w-4 h-4 ml-1" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24" 
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        </div>
                       ))}
                     </div>
                   )}
