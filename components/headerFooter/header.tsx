@@ -54,7 +54,6 @@ const Header = () => {
         { text: "Salaried Employees", href: "/individual-huf/salaried-employees" },
         { text: "Business/Profession", href: "/individual-huf/business-profession" },
         { text: "Senior / Super Senior Citizen", href: "/individual-huf/senior-citizens" },
-        { text: "Non Resident", href: "/individual-huf/non-resident" },
         { text: "Hindu Undivided Family (HUF)", href: "/individual-huf/huf" }
       ]
     },
@@ -72,28 +71,28 @@ const Header = () => {
       submenus: [
         {text:"Firm/LLP", href: "/non-company/firm-llp"},
         {text:"Local Authority", href: "/non-company/local-authority"},
-        {text:"AOP/BOI/Trust/AJP", href: "/non-company/others"},
       ]
     },
-    {
-      text: "Tax Professionals & Others",
-      href: "/tax-professionals",
-      submenus: [
-        { text: "Chartered Accountant", href: "/tax-professionals/chartered-accountant" },
-        { text: "E-Return Intermediaries", href: "/tax-professionals/e-return-intermediaries" },
-        { text: "External Agency", href: "/tax-professionals/external-agency" },
-        { text: "Tax Deductor & Collector", href: "/tax-professionals/tax-deductor-collector" },
-      ]
-    },
+    // {
+    //   text: "Tax Professionals & Others",
+    //   href: "/tax-professionals",
+    //   submenus: [
+    //     { text: "Chartered Accountant", href: "/tax-professionals/chartered-accountant" },
+    //     { text: "E-Return Intermediaries", href: "/tax-professionals/e-return-intermediaries" },
+    //     { text: "External Agency", href: "/tax-professionals/external-agency" },
+    //     { text: "Tax Deductor & Collector", href: "/tax-professionals/tax-deductor-collector" },
+    //   ]
+    // },
     { text: "About", href: "/about", submenus: [] },
     { text: "Help", href: "/help", submenus: [] },
-    { text: "Contact", href: "/contact", submenus: [] }
+    { text: "Contact", href: "/contact", target: "", submenus: [] },
+    { text: "Income Tax Department Official Website", href: "https://www.incometax.gov.in/iec/foportal/", target: "_blank", submenus: [] }
   ];
 
   const additionalNavItems = [
     { text: "Home", href: "/" },
     { text: "Dashboard", href: "/dashboard" },
-    
+    { text: "File Now", href: "/file-tax" },
   ];
 
   return (
@@ -149,9 +148,9 @@ const Header = () => {
           <div className="px-1 pt-3 w-full">
             <nav className="flex items-center justify-center gap-10 pl-10">
               {isAuthenticated ? (
-                additionalNavItems.map((item) => (
+                additionalNavItems.map((item, index) => (
                   <Link
-                    key={item.text}
+                    key={index}
                     href={item.href}
                     className="px-1 pb-3 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
                   >
@@ -160,10 +159,10 @@ const Header = () => {
                 ))
               ) : (
                 additionalNavItems
-                  .filter((item) => item.text !== 'Dashboard')
-                  .map((item) => (
+                  .filter((item) => item.text !== 'Dashboard' && item.text !== 'File Now')
+                  .map((item, index) => (
                     <Link
-                      key={item.text}
+                      key={index}
                       href={item.href}
                       className="px-1 pb-3 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm"
                     >
@@ -173,10 +172,11 @@ const Header = () => {
               )}
 
               {/* Dropdown Menus */}
-              {navMenus.map((menu) => (
-                <div key={menu.text} className="group relative">
+              {navMenus.map((menu, index) => (
+                <div key={index} className="group relative">
                   <Link
                     href={menu.href}
+                    target={menu?.target}
                     className="px-1 pb-3 text-white border-b-2 border-[#303c8c] hover:border-white font-semibold text-sm flex items-center"
                   >
                     {menu.text}
@@ -195,10 +195,9 @@ const Header = () => {
                   
                   {menu.submenus.length > 0 && (
                     <div className="absolute hidden group-hover:block z-50 bg-white shadow-lg min-w-[270px]">
-                      {menu.submenus.map((submenu) => (
-                        <div className="border-b-2 border-gray-300">
+                      {menu.submenus.map((submenu, index) => (
+                        <div className="border-b-2 border-gray-300" key={index}>
                           <Link
-                            key={submenu.text}
                             href={submenu.href}
                             className="flex justify-between px-6 py-4 text-gray-700 border-l-2 border-white hover:border-[#303c8c] hover:bg-blue-100 text-sm"
                           >
@@ -223,7 +222,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
+          {/* <button
             className="md:hidden text-gray-700 focus:outline-none"
             onClick={toggleMobileNav}
           >
@@ -241,7 +240,7 @@ const Header = () => {
                 d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
-          </button>
+          </button> */}
         </div>
       </header>
 

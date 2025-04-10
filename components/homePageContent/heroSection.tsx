@@ -16,16 +16,10 @@ const HeroSection = () => {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href="#"
+                href="/file-tax"
                 className="inline-block px-6 py-3 bg-white text-[#1f2c76] font-medium rounded hover:bg-gray-100"
               >
                 Start Filing Now
-              </Link>
-              <Link
-                href="#"
-                className="inline-block px-6 py-3 border border-white text-white font-medium rounded hover:bg-white/10"
-              >
-                Learn More
               </Link>
             </div>
           </div>

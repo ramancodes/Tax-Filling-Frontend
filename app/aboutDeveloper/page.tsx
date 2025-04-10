@@ -3,7 +3,12 @@ import React from "react";
 
 const page = () => {
   return (
-    <div>
+    <div className="container mx-auto py-6 px-4">
+      <nav className="flex text-sm mb-6">
+        <a href="/" className="text-blue-500 hover:underline">Home</a>
+        <span className="mx-2">›</span>
+        <p className="text-gray-500">About Developer</p>
+      </nav>
       {/* About Developer Section */}
       <section className="mb-16 flex flex-col justify-center items-center p-8">
         <h2 className="text-3xl font-semibold text-gray-800 mb-6">

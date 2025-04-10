@@ -31,22 +31,17 @@ const Footer = () => {
               <h3 className="text-lg font-bold mb-4">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/tax-guides" className="text-gray-400 hover:text-white">
-                    Tax Guides
+                  <Link href="/document-checklist" className="text-gray-400 hover:text-white">
+                    Document Checklist
                   </Link>
                 </li>
                 <li>
-                  <Link href="/calculators" className="text-gray-400 hover:text-white">
+                  <Link href="/taxCalculator" className="text-gray-400 hover:text-white">
                     Tax Calculators
                   </Link>
                 </li>
                 <li>
-                  <Link href="/forms" className="text-gray-400 hover:text-white">
-                    Tax Forms
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/faq" className="text-gray-400 hover:text-white">
+                  <Link href="/help" className="text-gray-400 hover:text-white">
                     FAQ
                   </Link>
                 </li>
@@ -63,8 +58,8 @@ const Footer = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/careers" className="text-gray-400 hover:text-white">
-                    Careers
+                  <Link href="/help" className="text-gray-400 hover:text-white">
+                    Help
                   </Link>
                 </li>
                 <li>
@@ -122,7 +117,7 @@ const Footer = () => {
                 © 2025 SimpleTax. All rights reserved.
               </p>
             </div>
-            <div className="flex space-x-6">
+            {/* <div className="flex space-x-6">
               <Link href="/terms" className="text-gray-400 hover:text-white">
                 Terms of Service
               </Link>
@@ -132,7 +127,7 @@ const Footer = () => {
               <Link href="/security" className="text-gray-400 hover:text-white">
                 Security
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </footer>

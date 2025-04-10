@@ -8,7 +8,7 @@ const QuickLinks = () => {
             <h2 className="text-2xl font-bold text-center mb-8">Quick Links</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
               {/* Individual Taxes */}
-              <Link href="/individual-taxes" className='cursor-pointer'>
+              <Link href="/individual-huf/salaried-employees" className='cursor-pointer'>
                 <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
                   <div className="p-6 text-center">
                     <div className="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -24,7 +24,7 @@ const QuickLinks = () => {
               </Link>
               
               {/* Business Taxes */}
-              <Link href="/business-taxes" className='cursor-pointer'>
+              <Link href="/individual-huf/business-profession" className='cursor-pointer'>
                 <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
                   <div className="p-6 text-center">
                     <div className="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
