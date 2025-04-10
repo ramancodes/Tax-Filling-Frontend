@@ -44,7 +44,7 @@ function SideNavigation() {
     {
       name: 'History',
       href: '/dashboard/itr-history',
-      icon: CurrencyDollarIcon,
+      icon: DocumentTextIcon,
     },
   ];
   

@@ -67,7 +67,7 @@ export default function ITRForm() {
     }
   };
 
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleBrowseClick = () => {
     fileInputRef.current?.click();
