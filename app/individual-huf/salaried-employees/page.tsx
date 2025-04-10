@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function SalariedIndividualsPage() {
-  const [expandedSection, setExpandedSection] = useState("returnForms");
+  const [expandedSection, setExpandedSection] = useState("");
 
   const toggleSection = (section: any) => {
     if (expandedSection === section) {
@@ -15,11 +15,18 @@ export default function SalariedIndividualsPage() {
   };
 
   return (
-    <div>
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8 mt-8">
-        Salaried Individuals for AY 2025-26
-      </h1>
-      <div className="font-sans text-gray-800 leading-relaxed">
+    <div className="min-h-screen container mx-auto py-6 px-4">
+      <nav className="flex text-sm mb-6">
+        <a href="/" className="text-blue-500 hover:underline">Home</a>
+        <span className="mx-2">›</span>
+        <a href="/individual-huf" className="text-blue-500 hover:underline">Individual/HUF</a>
+        <span className="mx-2">›</span>
+        <p className="text-gray-500">Salaried Employees</p>
+      </nav>
+      <div className="font-sans text-gray-800 leading-relaxed flex flex-col items-center">
+        <p className="text-4xl font-bold text-center text-gray-800 mb-8 mt-8 max-w-3xl">
+          Salaried Individuals for AY 2025-26
+        </p>
         <div className="bg-white p-5">
           <div className="max-w-6xl mx-auto bg-white p-6 rounded-md shadow">
             <p className="mb-8 mt-8 text-3xl font-bold">
@@ -389,7 +396,7 @@ export default function SalariedIndividualsPage() {
                   </div>
                 )}
 
-                <div
+                {/* <div
                   className="bg-blue-50 p-4 cursor-pointer rounded-md hover:bg-blue-100 transition-colors"
                   onClick={() => toggleSection("investments")}
                 >
@@ -405,7 +412,7 @@ export default function SalariedIndividualsPage() {
                   <div className="p-5 border border-gray-200 rounded-md mb-4">
                     
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -429,23 +436,9 @@ export default function SalariedIndividualsPage() {
 
             <ul className="list-disc pl-6 space-y-3">
               <li>
-                <Link href="/individual-huf/salaried-employees/user-manual-itr1">
-                  <span className="text-blue-600 hover:underline cursor-pointer">
-                    ITR-1 User Manual
-                  </span>
-                </Link>
-              </li>
-              <li>
                 <Link href="/individual-huf/salaried-employees/faqs-itr1">
                   <span className="text-blue-600 hover:underline cursor-pointer">
                     ITR-1 Frequently Asked Questions
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/individual-huf/salaried-employees/user-manual-itr4">
-                  <span className="text-blue-600 hover:underline cursor-pointer">
-                    ITR-4 User Manual
                   </span>
                 </Link>
               </li>

@@ -41,6 +41,11 @@ function SideNavigation() {
       href: '/dashboard/income',
       icon: CurrencyDollarIcon,
     },
+    {
+      name: 'History',
+      href: '/dashboard/itr-history',
+      icon: CurrencyDollarIcon,
+    },
   ];
   
   return (

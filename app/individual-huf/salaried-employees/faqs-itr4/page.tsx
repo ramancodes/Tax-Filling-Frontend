@@ -57,13 +57,18 @@ export default function ITR4FAQ() {
   ];
 
   return (
-    <div className="container mx-auto px-4 max-w-4xl py-8">
-      <Head>
-        <title>File ITR-4 (Sugam) Online - FAQs | Income Tax Department</title>
-        <meta name="description" content="Frequently Asked Questions about filing ITR-4 Sugam form online" />
-      </Head>
+    <div className="min-h-screen container mx-auto py-6 px-4">
+      <nav className="flex text-sm mb-6">
+        <a href="/" className="text-blue-500 hover:underline">Home</a>
+        <span className="mx-2">›</span>
+        <a href="/individual-huf" className="text-blue-500 hover:underline">Individual/HUF</a>
+        <span className="mx-2">›</span>
+        <a href="/individual-huf/salaried-employees" className="text-blue-500 hover:underline">Salaried Employees</a>
+        <span className="mx-2">›</span>
+        <p className="text-gray-500">ITR-4 FAQs</p>
+      </nav>
 
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">File ITR-4 (Sugam) Online - FAQs</h1>
+      <p className="text-3xl font-bold text-center text-gray-800 mb-8">File ITR-4 (Sugam) Online - FAQs</p>
       
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {faqItems.map((faq, index) => (

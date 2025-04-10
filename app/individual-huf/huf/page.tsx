@@ -21,16 +21,16 @@ export default function SalariedIndividualsPage() {
         <span className="mx-2">›</span>
         <a href="/individual-huf" className="text-blue-500 hover:underline">Individual/HUF</a>
         <span className="mx-2">›</span>
-        <p className="text-gray-500">Business Profession</p>
+        <p className="text-gray-500">Hindu Undivided Family (HUF) for AY 2025-2026</p>
       </nav>
       <div className="font-sans text-gray-800 leading-relaxed flex flex-col items-center">
         <p className="text-4xl font-bold text-center text-gray-800 mb-8 mt-8 max-w-3xl">
-          Individual having Income from Business / Profession for AY 2025-2026
+          Hindu Undivided Family (HUF) for AY 2025-2026
         </p>
         <div className="bg-white p-5">
           <div className="max-w-6xl mx-auto bg-white p-6 rounded-md shadow">
             <p className="mb-8 mt-8 text-3xl font-bold">
-            Returns and Forms Applicable to Individual having Income from Business / Profession for AY 2025-26
+              Returns and Forms Applicable for Hindu Undivided Family (HUF) for AY 2025-26 
             </p>
             <div className="mb-8 bg-blue-50 p-4 rounded-lg border border-blue-200">
               <p className="text-blue-800">
@@ -332,7 +332,7 @@ export default function SalariedIndividualsPage() {
                 </Link>
               </li> */}
               <li>
-                <Link href="/individual-huf/business-profession/faqs-itr4">
+                <Link href="/individual-huf/huf/faqs-itr4">
                   <span className="text-blue-600 hover:underline cursor-pointer">
                     ITR-4 Frequently Asked Questions
                   </span>

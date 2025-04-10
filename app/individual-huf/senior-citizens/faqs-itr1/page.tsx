@@ -55,7 +55,7 @@ export default function ITR1FAQ() {
         <span className="mx-2">›</span>
         <a href="/individual-huf" className="text-blue-500 hover:underline">Individual/HUF</a>
         <span className="mx-2">›</span>
-        <a href="/individual-huf/salaried-employees" className="text-blue-500 hover:underline">Salaried Employees</a>
+        <a href="/individual-huf/senior-citizens" className="text-blue-500 hover:underline">Senior Citizens</a>
         <span className="mx-2">›</span>
         <p className="text-gray-500">ITR-1 FAQs</p>
       </nav>

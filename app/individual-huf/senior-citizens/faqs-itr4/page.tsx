@@ -63,9 +63,9 @@ export default function ITR4FAQ() {
         <span className="mx-2">›</span>
         <a href="/individual-huf" className="text-blue-500 hover:underline">Individual/HUF</a>
         <span className="mx-2">›</span>
-        <a href="/individual-huf/business-profession" className="text-blue-500 hover:underline">Business Profession</a>
+        <a href="/individual-huf/senior-citizens" className="text-blue-500 hover:underline">Senior Citizens</a>
         <span className="mx-2">›</span>
-        <p className="text-gray-500">FAQs</p>
+        <p className="text-gray-500">ITR-4 FAQs</p>
       </nav>
 
       <p className="text-3xl font-bold text-center text-gray-800 mb-8">File ITR-4 (Sugam) Online - FAQs</p>
