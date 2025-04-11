@@ -4,6 +4,8 @@ import { userSlice } from "./user/slice";
 import { applicationSlice } from "./applications/slice";
 import { bankSlice } from './bankDetails/slice'
 import { incomeSourceSlice } from './incomeSources/slice'
+import { documentSlice } from './documents/slice'
+import { taxReturnSlice } from './taxReturns/slice'
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +13,8 @@ export const store = configureStore({
     [userSlice.name]: userSlice.reducer,
     [bankSlice.name]: bankSlice.reducer,
     [incomeSourceSlice.name]: incomeSourceSlice.reducer,
+    [documentSlice.name]: documentSlice.reducer,
+    [taxReturnSlice.name]: taxReturnSlice.reducer,
   }
 });
 

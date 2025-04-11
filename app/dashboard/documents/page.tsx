@@ -3,27 +3,32 @@
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector, RootState } from "../../../store";
+import { getDocument, addDocument, updateDocument, deleteDocument } from "../../../store/documents/actions";
+import Link from "next/link";
 
-// Define the document details interface
 interface DocumentDetails {
-  id?: string;
+  documentId?: string;
   documentType: string;
   file: File | null;
   fileName: string;
+  UserId?: string;
 }
 
 export default function DocumentUploadPage() {
   const dispatch = useAppDispatch();
   const {
-    application: {
-      bearerToken,
-      id,
-      apiState: { status, isError, message },
-    },
-  } = useAppSelector((state: RootState) => state);
+      application: {
+        bearerToken,
+        id,
+        apiState: { status, isError, message },
+      },
+      document: {
+        document: { rows, count } 
+      }
+    } = useAppSelector((state: RootState) => state);
 
   // Document Types
-  const documentTypes = [
+  const originalList = [
     "Aadhar Card",
     "PAN Card",
     "Driving Licence",
@@ -32,13 +37,22 @@ export default function DocumentUploadPage() {
     "Other",
   ];
 
+  const usedTypes = rows.map((row) => row.documentType);
+
+  const documentTypes = originalList.filter(
+    (type) => !usedTypes.includes(type)
+  );
+
   // State for managing documents
   const [documents, setDocuments] = useState<DocumentDetails[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [fetch, setFetch] = useState(true);
   const [currentDocument, setCurrentDocument] = useState<DocumentDetails>({
+    documentId: "",
     documentType: "",
     file: null,
     fileName: "",
+    UserId: id
   });
 
   // Ref for file input
@@ -60,6 +74,7 @@ export default function DocumentUploadPage() {
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
+    
     if (selectedFile) {
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024; // 5MB
@@ -86,62 +101,109 @@ export default function DocumentUploadPage() {
     }));
   };
 
-  // Save document details
-  const handleSaveDocument = () => {
-    // Validate document
-    if (!validateDocument()) {
-      return;
-    }
-
-    // Check if editing existing document
-    const existingDocIndex = documents.findIndex(
-      (doc) => doc.id === currentDocument.id
-    );
-
-    if (existingDocIndex !== -1) {
-      // Update existing document
-      const updatedDocuments = [...documents];
-      updatedDocuments[existingDocIndex] = {
-        ...currentDocument,
-        id: currentDocument.id,
+  const fetchDocuments = async () => {
+        try {
+          dispatch(
+            getDocument(id, {
+              headers: { Authorization: `Bearer ${bearerToken}` },
+            })
+          );
+        } catch (error) {
+          console.log(error);
+        }
       };
-      setDocuments(updatedDocuments);
-      toast.success("Document updated");
-    } else {
-      // Add new document
-      const newDocument = {
-        ...currentDocument,
-        id: `doc_${Date.now()}`,
-      };
-      setDocuments((prev) => [...prev, newDocument]);
-      toast.success("Document added");
-    }
+  
+    useEffect(() => {
+      if (fetch) {
+        fetchDocuments();
+        setFetch(false);
+      }
+    }, [fetch]);
 
-    // Reset state
-    setIsEditing(false);
-    setCurrentDocument({
-      documentType: "",
-      file: null,
-      fileName: "",
-    });
+    const handleAddDocument = () => {
+      try {
+        if (currentDocument.documentType===""||currentDocument.file===null||currentDocument.fileName===""){
+          return;
+        }
+        
+        // TODO: implement add new
+        dispatch(
+          addDocument(id,
+            {
+              headers: { 
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-Type": "multipart/form-data",
+               },
+            },
+            currentDocument
+            )
+        ).then(()=>{
+          setIsEditing(false);
+          setFetch(true);
+          toast.success("Document added");
+        })
+    
+        setIsEditing(false);
+        setCurrentDocument({
+          documentId: "",
+          documentType: "",
+          file: null,
+          fileName: ""
+        });
 
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      } catch (error) {
+        
+      }
+    };
 
-  // Handle viewing a document
-  const handleViewDocument = (document: DocumentDetails) => {
-    if (document.file) {
-      const fileURL = URL.createObjectURL(document.file);
-      window.open(fileURL, "_blank");
-    }
-  };
+    const handleUpdateDocument = () => {
+      try {
+        if (currentDocument.documentType===""){
+          return;
+        }
+  
+        // TODo: implement update bank
+        dispatch(
+          updateDocument(
+            {
+              headers: { Authorization: `Bearer ${bearerToken}` },
+            },
+            currentDocument
+          )
+        ).then(()=>{
+          setIsEditing(false);
+          setFetch(true);
+          toast.success("Document updated");
+        })
+    
+        setIsEditing(false);
+        setCurrentDocument({
+          documentId: "",
+          documentType: "",
+          file: null,
+          fileName: ""
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      } catch (error) {
+        
+      }
+    };
+    
 
   // Handle editing a document
-  const handleEditDocument = (document: DocumentDetails) => {
-    setCurrentDocument(document);
+  const handleEditDocument = (document: any) => {
+    setCurrentDocument({
+      documentId: document?.id,
+      fileName: document?.fileName,
+      documentType: document?.documentType,
+      file: document?.file,
+      UserId: document?.UserId
+    });
     setIsEditing(true);
   };
 
@@ -151,8 +213,19 @@ export default function DocumentUploadPage() {
       "Are you sure you want to remove this document?"
     );
     if (confirmRemove) {
-      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
-      toast.success("Document removed");
+      dispatch(
+        deleteDocument(
+          documentId,
+          {
+            headers: { Authorization: `Bearer ${bearerToken}` },
+          },
+          )
+      ).then(()=>{
+        setIsEditing(false);
+        setFetch(true);
+        toast.success("Document removed");
+      }
+      )
     }
   };
 
@@ -176,7 +249,7 @@ export default function DocumentUploadPage() {
       <p className="text-2xl font-bold mb-6">Document Upload</p>
 
       {/* No Documents Added */}
-      {documents.length === 0 && (
+      {rows.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-10 mt-20">
           <div className="h-34 w-34 rounded-full bg-gray-200 flex items-center justify-center">
             <span className="text-gray-500 text-5xl">📄</span>
@@ -194,7 +267,7 @@ export default function DocumentUploadPage() {
       )}
 
       {/* Documents List */}
-      {documents.length > 0 && (
+      {rows.length > 0 && (
         <div className="space-y-4">
           <button
             className="mb-4 px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-[#303c8c] cursor-pointer"
@@ -203,7 +276,7 @@ export default function DocumentUploadPage() {
             Add Document
           </button>
 
-          {documents.map((document) => (
+          {rows.map((document) => (
             <div
               key={document.id}
               className="bg-white shadow rounded-lg p-6 flex justify-between items-center"
@@ -217,12 +290,13 @@ export default function DocumentUploadPage() {
                 </p>
               </div>
               <div className="flex space-x-2">
-                <button
-                  onClick={() => handleViewDocument(document)}
+                <Link
+                  href={document.file}
+                  target="_blank"
                   className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                 >
                   View
-                </button>
+                </Link>
                 <button
                   onClick={() => handleEditDocument(document)}
                   className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -246,7 +320,7 @@ export default function DocumentUploadPage() {
         <div className="fixed backdrop-blur-sm inset-0 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
             <h2 className="text-xl font-bold mb-4">
-              {currentDocument.id ? "Edit Document" : "Add Document"}
+              {currentDocument.documentId ? "Edit Document" : "Add Document"}
             </h2>
             <p className="text-gray-600 mb-6">
               Upload your document details
@@ -276,7 +350,18 @@ export default function DocumentUploadPage() {
                 </select>
               </div>
 
-              <div>
+              {
+                currentDocument?.documentId 
+                ? <div>
+                  <label
+                    htmlFor="file"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Uploaded Document
+                  </label>
+                  <p className="pt-4">{currentDocument.fileName}</p>
+                </div>
+                : <div>
                 <label
                   htmlFor="file"
                   className="block text-sm font-medium text-gray-700 mb-1"
@@ -298,6 +383,9 @@ export default function DocumentUploadPage() {
                   </p>
                 )}
               </div>
+              }
+
+              
             </div>
 
             <div className="flex justify-end space-x-4 mt-6">
@@ -310,7 +398,7 @@ export default function DocumentUploadPage() {
               </button>
               <button
                 type="button"
-                onClick={handleSaveDocument}
+                onClick={currentDocument.documentId ? handleUpdateDocument : handleAddDocument}
                 className="px-4 py-2 bg-[#303c8c] text-white rounded hover:bg-blue-700"
               >
                 Save

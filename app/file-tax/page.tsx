@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { useAppDispatch, useAppSelector, RootState } from "../../store";
+import { getTaxReturn, updateTaxReturn, addTaxReturn, deleteTaxReturn } from "../../store/taxReturns/actions"
 import toast from "react-hot-toast";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ export default function ITRForm() {
   const dispatch = useAppDispatch();
 
   const {
+    id,
     bearerToken,
     apiState: { status, isError, message },
     isLoginError,
@@ -28,16 +30,29 @@ export default function ITRForm() {
     "2023-24",
     "2022-23",
     "2021-22",
-    "2020-21",
   ];
   
   const filingTypes = [
+    "u/s 139(1) - On or before due date",
+    "u/s 139(4) - Belated Return",
+    "u/s 139(5) - Revised Return",
+    "u/s 170A - Modified Return for Business Reorganization",
+    "u/s 142(1) - Filed in response to notice",
     "u/s 92CD - Modified Return",
-    "u/s 139(9A) – After condonation of delay u/s 119(2)(b) / Court Order or Sanction Order of Business re-organisation of the Competent authority issued prior to 01.04.2022",
+    "u/s 139(9A) - After condonation of delay u/s 119(2)(b) / Court Order or Sanction Order of Business re-organisation of the Competent authority issued prior to 01.04.2022",
     "139(8A) - Updated Return",
   ];
   
-  const itrTypes = ["ITR-1", "ITR-2", "ITR-3", "ITR-4"];
+  const itrTypes = [
+    "ITR-1(Sahaj), For individuals having income from salary, one house property, other sources (interest etc.) and total income up to ₹50 lakh.", 
+    "ITR-2 For individuals and HUFs not having income from business/profession.", 
+    "ITR-3 For individuals and HUFs having income from business or profession.", 
+    "ITR-4(Sugam) For individuals, HUFs, and firms (other than LLP) under presumptive taxation (Sections 44AD, 44ADA, 44AE) with income up to ₹50 lakh.",
+    "ITR-5 For LLPs, AOPs, BOIs, and other entities not filing ITR-7.",
+    "ITR-6 For companies other than those claiming exemption under section 11 (like charitable trusts).",
+    "ITR-7 For persons (including companies) required to furnish return under sections 139(4A) to 139(4F), mostly trusts, political parties, institutions.",
+    
+  ];
 
   const handleContinue = () => {
     setStep(step + 1);
@@ -76,8 +91,6 @@ export default function ITRForm() {
   const handleSubmit = async (e: any) => {
     try {
       e.preventDefault();
-      
-      // Validate form data
       if (!formData.assessmentYear || !formData.filingType || !formData.itrType || !formData.file) {
         toast.error("Please fill all required fields");
         return;
@@ -85,11 +98,21 @@ export default function ITRForm() {
       
       console.log("Form data to submit:", formData);
       
-      // Here you would normally dispatch your API call
-      // dispatch(submitITRForm(formData, { headers: { Authorization: `Bearer ${bearerToken}` } }));
+      dispatch(
+        addTaxReturn(id,
+          {
+            headers: { 
+              Authorization: `Bearer ${bearerToken}`,
+              "Content-Type": "multipart/form-data",
+              },
+          },
+          formData
+          )
+      ).then(()=>{
+        setSuccess(true);
+        toast.success("Income Tax Return Filed Successfully");
+      })
       
-      setSuccess(true);
-      toast.success("Income Tax Return Filed Successfully");
       
     } catch (error) {
       console.error("Error submitting form:", error);
