@@ -335,7 +335,7 @@ export default function IncomeSourcesPage() {
                 >
                   <option value="Primary">Primary</option>
                   <option value="Secondary">Secondary</option>
-                  <option value="Extra">Extra</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
 

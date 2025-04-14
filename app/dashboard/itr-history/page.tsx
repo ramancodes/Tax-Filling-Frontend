@@ -9,9 +9,23 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useAppDispatch, useAppSelector, RootState } from "../../../store";
 import { getTaxReturn } from "../../../store/taxReturns/actions";
 import { Button } from "@mui/material";
+import PaidIcon from '@mui/icons-material/Paid';
+import PaymentIcon from '@mui/icons-material/Payment';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import axios from "axios";
+import { AppConfig } from "../../../config/config";
+import toast from "react-hot-toast";
+import Script from "next/script";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function ITRHistoryPage() {
   const [fetch, setFetch] = useState(true);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const {
     application: {
       bearerToken,
@@ -59,12 +73,6 @@ export default function ITRHistoryPage() {
     }));
   };
 
-  // Function to view ITR file
-  const handleViewITR = (id: string) => {
-    console.log(`Viewing ITR with ID: ${id}`);
-    alert(`Viewing ITR file with ID: ${id}`);
-  };
-
   // Format amount as currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -83,10 +91,74 @@ export default function ITRHistoryPage() {
   
     return `${day}-${month}-${year}`;
   }
+
+  const initPay = (order: any, type: any, incomeTaxId: any, paymentId: any) => {
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: `${type} payment`,
+      description:`${type} payment`,
+      order_id: order.id,
+      receipt: order.receipt,
+      handler: async (response: any)=>{
+        console.log(response)
+
+        try {
+          const {data} = await axios.post(AppConfig.BACKEND_URL+'/verify-payment', 
+            {response, type, incomeTaxId, paymentId},
+            {
+              headers: { Authorization: `Bearer ${bearerToken}` },
+            }
+          )
+          console.log("data: ",data);
+          
+          if(data.success){
+            setFetch(true);
+          }
+        } catch (error) {
+          console.log(error)
+          toast.error("Payment Failed")
+          
+        }
+      }
+    }
+
+    const rzp = new window.Razorpay(options)
+    rzp.open()
+  }
+
+  const handlePayment = async (incomeTaxId: any, type: any) => {
+    try {
+      const { data } = await axios.post(
+        AppConfig.BACKEND_URL + '/payment-razorpay',
+        { incomeTaxId, type },
+        {
+          headers: { Authorization: `Bearer ${bearerToken}` },
+        }
+      );
+      console.log(data);
+      
+      if (data.success) {
+        console.log(data.order);
+        initPay(data.order, type, incomeTaxId, data.order.id);
+      } else {
+        toast.error("Failed to initiate payment");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Error initializing payment");
+    }
+  };
   
 
   return (
     <div>
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+        onLoad={() => setRazorpayLoaded(true)}
+      />
       <p className="text-2xl font-bold mb-6">Income Tax Return History</p>
       {count === 0 && (
         <div className="flex flex-col items-center justify-center gap-10 mt-20">
@@ -120,12 +192,15 @@ export default function ITRHistoryPage() {
                   <div>
                     <div className="flex items-center space-x-2">
                       <DescriptionIcon className="text-blue-500" fontSize="small" />
-                      <p className="text-lg font-semibold">{record?.itrType}</p>
+                      <p className="pl-4 pb-2 pr-4 text-lg font-semibold w-4xl">{record?.itrType}</p>
                     </div>
                     <p className="text-gray-600 text-sm mt-1">Filed on: {formatDate(record?.createdAt)}</p>
-                    <p className="text-gray-800 font-medium mt-2">Tax Amount: {formatCurrency(record?.taxAmount)}</p>
+                    <p className="text-gray-800 font-medium mt-2">Tax Amount: {formatCurrency(record?.totalTaxAmount)}</p>
+                    <p className="text-gray-800 font-medium mt-2">Due Tax Amount: {formatCurrency(record?.dueTaxAmount)}</p>
                   </div>
-                  <div className="flex space-x-3">
+                  <div>
+                  {/* view and income details button */}
+                  <div className="flex space-x-3 mt-4">
                     <Link 
                     href={record?.file}
                     target="_blank"
@@ -142,6 +217,36 @@ export default function ITRHistoryPage() {
                         <KeyboardArrowDownIcon fontSize="small" className="ml-2" />}
                     </button>
                   </div>
+                  </div>
+
+                </div>
+
+                {/* pay fees and pay tax buttons */}
+                <div className="flex space-x-3 mt-4">
+                  {
+                    record?.feePaid
+                    ? null
+                    : <button
+                    onClick={() => handlePayment(record?.id, "fees")}
+                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer"
+                    >
+                      <PaymentIcon fontSize="small" className="mr-2" /> Pay Application Fees
+                    </button>
+                  }
+
+                  {
+                    record?.dueTaxAmount <= 0
+                    ? null
+                    :
+                    !record?.feePaid || record?.duePaid
+                    ? null
+                    : <button
+                    onClick={() => handlePayment(record?.id, "tax")}
+                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer"
+                    >
+                      <ReceiptIcon fontSize="small" className="mr-2" /> Pay Due Tax
+                    </button>
+                  }
                 </div>
 
                 {openDropdowns[record?.id] && record?.incomeDetails && (
@@ -156,7 +261,7 @@ export default function ITRHistoryPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {record.incomeDetails.slice(0, -1).map((detail:any, idx:any) => (
+                          {record.incomeDetails.map((detail:any, idx:any) => (
                             <tr key={idx} className="border-t border-gray-200">
                               <td className="py-2">{detail?.incomeType}</td>
                               <td className="py-2">{formatCurrency(detail?.incomeAmount)}</td>
@@ -166,7 +271,7 @@ export default function ITRHistoryPage() {
                             <td className="py-2">Total Income</td>
                             <td className="py-2">
                               {formatCurrency(
-                                record.incomeDetails.slice(-1)[0].incomeAmount
+                                record?.totalIncome
                               )}
                             </td>
                           </tr>

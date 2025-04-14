@@ -39,8 +39,8 @@ const QuickLinks = () => {
                 </div>
               </Link>
               
-              {/* Tax Calculator */}
-              <Link href="/taxCalculator" className='cursor-pointer'>
+              {/* File Tax */}
+              <Link href="/file-tax" className='cursor-pointer'>
                 <div className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
                   <div className="p-6 text-center">
                     <div className="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -48,7 +48,7 @@ const QuickLinks = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold mb-2">Tax Calculator</h3>
+                    <h3 className="text-lg font-bold mb-2">File ITR</h3>
                     <p className="text-gray-600 mb-4">Estimate your tax return or liability</p>
                       Learn More
                   </div>

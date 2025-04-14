@@ -155,14 +155,26 @@ export default function ITRForm() {
               {/* Tick Mark */}
               <div className="relative w-20 h-10 border-l-8 border-b-8 border-white transform -rotate-45 translate-y-2"></div>
             </div>
+
+            <div className="p-6 font-semibold text-center">
+              <p>Your Application is Submitted.<br /> You can pay the application fees in your dashbord to continue the ITR process.</p>
+            </div>
       
             {/* Go to Home Button */}
+            <div className="flex gap-4 mt-6">
+            <Link
+              href="/dashboard/itr-history"
+              className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transform transition-all duration-300 active:scale-95"
+            >
+              Go to ITR Dashboard
+            </Link>
             <Link
               href="/"
-              className="mt-10 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transform transition-all duration-300 active:scale-95"
+              className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transform transition-all duration-300 active:scale-95"
             >
               Go to Home
             </Link>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
