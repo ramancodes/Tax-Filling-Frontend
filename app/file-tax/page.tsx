@@ -1,9 +1,10 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector, RootState } from "../../store";
-import { getTaxReturn, updateTaxReturn, addTaxReturn, deleteTaxReturn } from "../../store/taxReturns/actions"
+import { getTaxReturn, updateTaxReturn, addTaxReturn, deleteTaxReturn } from "../../store/taxReturns/actions";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ITRForm() {
   const [step, setStep] = useState(1);
@@ -15,8 +16,8 @@ export default function ITRForm() {
     file: null,
   });
   const [success, setSuccess] = useState(false);
-
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const {
     id,
@@ -24,6 +25,12 @@ export default function ITRForm() {
     apiState: { status, isError, message },
     isLoginError,
   } = useAppSelector((state: RootState) => state.application);
+
+  useEffect(()=>{
+    if(!bearerToken){
+      router.push('/login');
+    }
+  }, []);
 
   const assessmentYears = [
     "2024-25",

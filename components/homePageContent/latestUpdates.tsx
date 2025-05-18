@@ -9,21 +9,21 @@ const LatestUpdates = () => {
       categoryColor: "primary",
       title: "2025 Tax Filing Season Opens",
       description: "The IRS has announced the official start date for the 2025 tax filing season. Be ready with SimpleTax.",
-      link: "/news/2025-tax-season"
+      link: "https://cleartax.in/s/due-date-tax-filing"
     },
     {
       category: "UPDATES",
       categoryColor: "green",
       title: "New Tax Credits Available",
       description: "Learn about the new energy-efficient home improvement tax credits available for this tax year.",
-      link: "/updates/new-tax-credits"
+      link: "https://www.kotaklife.com/insurance-guide/savingstax/income-tax-deductions-list"
     },
     {
       category: "TIPS",
       categoryColor: "purple",
       title: "Maximize Your Tax Refund",
       description: "Top 5 strategies to ensure you don't miss any deductions and get the maximum refund possible.",
-      link: "/tips/maximize-refund"
+      link: "https://turbotax.intuit.com/tax-tips/tax-refund/5-hidden-ways-to-boost-your-tax-refund/L0AZGnJuSs"
     }
   ];
 
@@ -59,6 +59,7 @@ const LatestUpdates = () => {
                 </p>
                 <Link
                   href={update.link}
+                  target="_blank"
                   className="inline-flex items-center text-primary hover:underline"
                 >
                   Read More
