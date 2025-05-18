@@ -5,6 +5,6 @@ export const documentModel = (userObj: any = {}) => {
     fileName: userObj?.fileName ? userObj?.fileName : "N/A",
     file: userObj?.file ? userObj?.file : "N/A",
     createdAt: userObj?.createdAt ? userObj?.createdAt : "N/A",
-    UserId: userObj?.UserId ? userObj?.UserId : "N/A",
+    UserId: userObj?.userId ? userObj?.userId : "N/A",
   };
 };

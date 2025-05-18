@@ -3,9 +3,9 @@ import moment from "moment-timezone";
 export const userDetailsModel = (userObj: any = {}) => {
   return {
     id: userObj?.id ? userObj?.id : "N/A",
-    email: userObj?.User?.email ? userObj?.User?.email : "N/A",
-    username: userObj?.User?.username ? userObj?.User?.username : 'N/A',
-    role: userObj?.User?.role ? userObj?.User?.role : 'N/A',
+    email: userObj?.user?.email ? userObj?.user?.email : "N/A",
+    username: userObj?.user?.username ? userObj?.user?.username : 'N/A',
+    role: userObj?.user?.role ? userObj?.user?.role : 'N/A',
     firstName: userObj?.firstName ? userObj?.firstName : "N/A",
     middleName: userObj?.middleName ? userObj?.middleName : "N/A",
     lastName: userObj?.lastName ? userObj?.lastName : "N/A",
@@ -19,11 +19,11 @@ export const userDetailsModel = (userObj: any = {}) => {
     address: userObj?.address ? userObj?.address : "N/A",
     occupation: userObj?.occupation ? userObj?.occupation : "N/A",
     website: userObj?.website ? userObj?.website : "N/A",
-    createdAt: userObj?.User?.createdAt
+    createdAt: userObj?.user?.createdAt
     ? moment
-        .tz(userObj.User.createdAt, moment.tz.guess())
+        .tz(userObj.user.createdAt, moment.tz.guess())
         .format("YYYY-MM-DD, HH:mm")
     : "N/A",
-    UserId: userObj?.UserId ? userObj?.UserId : "N/A",
+    UserId: userObj?.userId ? userObj?.userId : "N/A",
   };
 };

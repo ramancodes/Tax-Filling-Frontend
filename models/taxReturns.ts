@@ -13,6 +13,6 @@ export const taxReturnModel = (userObj: any = {}) => {
     approved: userObj?.approved,
     incomeDetails: userObj?.incomeDetails ? userObj?.incomeDetails : "N/A",
     createdAt: userObj?.createdAt ? userObj?.createdAt : "N/A",
-    UserId: userObj?.UserId ? userObj?.UserId : "N/A",
+    UserId: userObj?.userId ? userObj?.userId : "N/A",
   };
 };

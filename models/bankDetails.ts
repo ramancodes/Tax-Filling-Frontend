@@ -5,6 +5,6 @@ export const bankDetailsModel = (userObj: any = {}) => {
       accountNumber: userObj?.accountNumber ? userObj?.accountNumber : "N/A",
       customerId: userObj?.customerId ? userObj?.customerId : "N/A",
       ifscCode: userObj?.ifscCode ? userObj?.ifscCode : "N/A",
-      UserId: userObj?.UserId ? userObj?.UserId : "N/A",
+      UserId: userObj?.userId ? userObj?.userId : "N/A",
   };
 };
